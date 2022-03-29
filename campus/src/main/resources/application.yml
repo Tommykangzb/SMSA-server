@@ -1,0 +1,21 @@
+#端口配置
+server:
+  port: 8080
+#jdbc配置
+spring:
+#  datasource:
+#    driver-class-name: com.mysql.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/video?useUnicode=true&characterEncoding=utf8
+#    username: xyz
+#    password: xyz
+  application:
+    name: campus
+#mybatis配置
+#mybatis:
+  #实体类所在包名
+  #type-aliases-package: com.xyz.mapper.entity
+#通用mapper配置
+#mapper:
+  #公用接口类路径
+  #mappers: com.xyz.mapper.baseDao.IBaseDao
+  #identity: MYSQL
