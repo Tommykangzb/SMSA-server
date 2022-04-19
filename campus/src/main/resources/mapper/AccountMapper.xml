@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.campus.dao.AccountDAO">
+<!-- 登录 -->
+<resultMap type="com.example.campus.bean.Account" id="LoginMap">
+    <id property="account_num" column="account_num" jdbcType="VARCHAR"/>
+    <result property="password" column="password" />
+    <result property="isSuperAdmin" column="isSuperAdmin" />
+    <result property="headTeacherClass_id" column="class_id"/>
+</resultMap>
+<select id="getByAccount_numAndPassword" parameterType="String" resultMap="LoginMap">
+        with tmp(account_num,password,isSuperAdmin, teacher_id) as (select account_num,password,isSuperAdmin,teacher_id from(account left outer join teacher_account using(account_num)) left outer join teacher using(teacher_id) where account_num = #{account_num} AND password = #{password})
+        select tmp.account_num,tmp.password,tmp.isSuperAdmin, classgrade.class_id from tmp left outer join classgrade on tmp.teacher_id=classgrade.headTeacher_id
+    </select>
+<!-- 增加账号 -->
+<insert id="insertAccount" parameterType="String">
+        INSERT INTO account(account_num,password,isSuperAdmin)
+		VALUES (#{account_num, jdbcType=VARCHAR},#{password, jdbcType=VARCHAR},0);
+		INSERT INTO teacher(teacher_id,teacher_name)
+		VALUES (#{teacher_id, jdbcType=VARCHAR},#{teacher_name, jdbcType=VARCHAR});
+		INSERT INTO teacher_account(teacher_id,account_num)
+		VALUES (#{teacher_id, jdbcType=VARCHAR},#{account_num, jdbcType=VARCHAR});
+    </insert>
+<!-- 删除账号 -->
+<delete id="deleteAccount" parameterType="String">
+        delete from teacher_account where account_num=#{account_num};
+        delete from teacher where teacher_id =#{teacher_id} ;
+        delete from account where account_num=#{account_num}
+    </delete>
+<!-- 设置教师任课班级 -->
+<insert id="setTeacherClass" parameterType="String">
+	    INSERT INTO class_teacher(class_id,teacher_id)
+		VALUES (#{class_id, jdbcType=VARCHAR},#{teacher_id,jdbcType=VARCHAR});
+	</insert>
+<!-- 撤销教师任课班级 -->
+<delete id="cancelTeacherClass" parameterType="String">
+	    delete from class_teacher where class_id=#{class_id} and teacher_id=#{teacher_id}
+	</delete>
+<!-- 设置班主任 -->
+<update id="setHeadTeacher" parameterType="String">
+	    update classgrade set classgrade.headTeacher_id=(select teacher_id from teacher_account where account_num=#{account_num}) where classgrade.class_id=#{class_id}
+	</update>
+<!-- 撤销班主任 -->
+<update id="cancelHeadTeacher" parameterType="String">
+	    update classgrade set classgrade.headTeacher_id=null where classgrade.class_id=#{class_id} and classgrade.headTeacher_id=(select teacher_id from teacher_account where account_num=#{account_num})
+	</update>
+<!-- 查找特定账号和对应教师以及所教班级 -->
+<resultMap type="com.example.campus.bean.Account" id="AccountMap">
+    <id property="account_num" column="account_num" jdbcType="VARCHAR"/>
+    <result property="headTeacherClass_id" column="headclass_id" />
+    <association property="teacher" javaType="com.example.campus.bean.Teacher">
+        <id property="teacher_id" column="teacher_id" />
+        <result property="teacher_name" column="teacher_name" />
+        <collection property="classGrades" javaType="java.util.ArrayList" ofType ="com.example.campus.bean.ClassGrade">
+            <id property="class_id" column="teachclass_id" />
+        </collection>
+    </association>
+</resultMap>
+<select id="getAccountInfo" resultMap="AccountMap">
+        with tmp(account_num,teacher_id,teacher_name) as (select account_num,teacher_id,teacher_name from(account natural join teacher_account) natural join teacher where account_num=#{account_num}),
+        head(class_id) as (select class_id from tmp left outer join classgrade on tmp.teacher_id=classgrade.headTeacher_id),
+        class( account_num,teacher_id,teacher_name,teachclass_id) as (select account_num,teacher_id,teacher_name,class_id from tmp  left outer join class_teacher using(teacher_id) left outer join classgrade using (class_id))
+        select class.account_num,class.teacher_id,class.teacher_name,class.teachclass_id, head.class_id as headclass_id
+        from class,head
+    </select>
+<!-- 查找全部账号和对应教师 -->
+<resultMap type="com.example.campus.bean.Account" id="AccountListMap">
+    <id property="account_num" column="account_num" jdbcType="VARCHAR"/>
+    <result property="password" column="password" />
+    <result property="isSuperAdmin" column="isSuperAdmin" />
+    <association property="teacher" javaType="com.example.campus.bean.Teacher">
+        <id property="teacher_id" column="teacher_id" />
+        <result property="teacher_name" column="teacher_name" />
+    </association>
+</resultMap>
+<select id="getAllAccount" resultMap="AccountListMap">
+        select account_num,password,isSuperAdmin,teacher_id,teacher_name
+        from (account natural join teacher_account) natural join teacher
+    </select>
+<!-- 根据账号获取教师编号 -->
+<select id="getTeacher_idByAccount_num" parameterType="String" resultType="String">
+        select teacher_id from teacher_account
+        where account_num = #{account_num}
+    </select>
+<!-- 增加班级 -->
+<insert id="insertClass">
+        INSERT INTO classgrade(class_id,grade,class_count,headTeacher_id)
+		VALUES (#{class_id, jdbcType=VARCHAR},#{grade, jdbcType=INTEGER},0,null);
+    </insert>
+<!-- 删除班级 -->
+<delete id="deleteClass" parameterType="String">
+        delete from classgrade where class_id =#{class_id}
+    </delete>
+</mapper>

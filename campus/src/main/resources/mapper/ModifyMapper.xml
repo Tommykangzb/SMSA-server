@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.campus.dao.ModifyDAO">
+
+    <!-- 增加学生 -->
+    <insert id="add" parameterType="String">
+        INSERT INTO student( student_id, student_name, student_tel, class_id, student_office, student_age, student_gender, student_introduction, student_photo, student_seat, student_hometown, student_politicalStatus, student_birthday, ID)
+		VALUES (#{student_id, jdbcType=VARCHAR},#{student_name, jdbcType=VARCHAR},#{student_tel, jdbcType=VARCHAR},#{class_id, jdbcType=VARCHAR},#{student_office, jdbcType=VARCHAR},#{student_age, javaType=INTEGER,jdbcType=INTEGER},#{student_gender, javaType=INTEGER, jdbcType=INTEGER},#{student_introduction, jdbcType=VARCHAR},#{student_photo, jdbcType=VARCHAR},#{student_seat,  javaType=INTEGER,jdbcType=INTEGER},#{student_hometown, jdbcType=VARCHAR},#{student_politicalStatus, jdbcType=VARCHAR},#{student_birthday,  javaType=java.sql.Date,jdbcType=DATE},#{ID, jdbcType=VARCHAR});
+    	update classgrade set class_count=(select count(student_id) from student where class_id=(select class_id from student where student_id=#{student_id, jdbcType=VARCHAR})) where class_id=(select class_id from student where student_id=#{student_id, jdbcType=VARCHAR})
+    </insert>
+    <!-- 删除学生 -->
+    <delete id="delete" parameterType="String">
+        delete from student   where student_id=#{student_id};
+        update classgrade set class_count=(select count(student_id) from student where class_id=(select class_id from student where student_id=#{student_id, jdbcType=VARCHAR})) where class_id=(select class_id from student where student_id=#{student_id, jdbcType=VARCHAR});
+    </delete>
+
+    <!-- 修改基本情况 -->
+    <update id="modifyBasic" parameterType="String">
+        update classgrade set class_count=(select count(student_id) from student where class_id=(select class_id from student where student_id=#{student_id, jdbcType=VARCHAR}))-1 where class_id=(select class_id from student where student_id=#{student_id, jdbcType=VARCHAR});
+	    update student set student.student_name=#{student_name},student.student_tel=#{student_tel},student.class_id=#{class_id},
+	     student.student_office=#{student_office},student.student_age=#{student_age ,javaType=INTEGER,jdbcType=INTEGER},student.student_gender=#{student_gender,javaType=INTEGER,jdbcType=INTEGER},
+	     student.student_introduction=#{student_introduction},student.student_hometown=#{student_hometown},
+	     student.student_politicalStatus=#{student_politicalStatus},student.student_birthday=#{student_birthday,  javaType=java.sql.Date,jdbcType=DATE},
+	     student.ID=#{ID} where student.student_id=#{student_id};
+	     update classgrade set class_count=(select count(student_id) from student where class_id=(select class_id from student where student_id=#{student_id, jdbcType=VARCHAR})) where class_id=(select class_id from student where student_id=#{student_id, jdbcType=VARCHAR});
+	</update>
+
+    <!-- 修改照片 -->
+    <update id="modifyPhoto" parameterType="String">
+	    update student set student.student_photo=#{student_photo} where student.student_id=#{student_id}
+	</update>
+
+    <!-- 修改座位 -->
+    <update id="modifySeat" parameterType="String">
+	    update student set student.student_seat=#{student_seat,javaType=INTEGER,jdbcType=INTEGER} where student.student_id=#{student_id}
+	</update>
+	<!-- 判断职务是否已经安排人员 -->
+	<select id="IsHasSet"  resultType="java.lang.Integer">
+        SELECT  count(student_id) From student WHERE student_office=#{student_office} AND class_id=(select class_id from student where student_id=#{student_id})
+    </select>
+	<!-- 判断位置是否已经有人 -->
+	<select id="IsHasOne"  resultType="java.lang.Integer">
+        SELECT  count(student_id) From student WHERE student_seat=#{student_seat} AND class_id=(select class_id from student where student_id=#{student_id})
+    </select>
+	<!-- 获取班级人数 -->
+	<select id="GetNumOfClass" parameterType="String" resultType="java.lang.Integer">
+        select count(student_id) from student where class_id=#{class_id}
+    </select>
+    <!-- 获取班级职务 -->
+    <select id="GetOffice" parameterType="String" resultType="java.lang.String">
+        select student_id from student where class_id=#{class_id} and student_office=#{student_office}
+    </select>
+</mapper>

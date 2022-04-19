@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/SMSA-server.iml" filepath="$PROJECT_DIR$/.idea/SMSA-server.iml" />
-      <module fileurl="file://$PROJECT_DIR$/bookdeal/bookdeal.iml" filepath="$PROJECT_DIR$/bookdeal/bookdeal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/query/wj.iml" filepath="$PROJECT_DIR$/query/wj.iml" />
     </modules>
   </component>
 </project>

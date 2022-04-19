@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.campus.dao.QueryDAO">
+    <resultMap id="QueryMap" type="com.example.campus.bean.Student">
+        <id property="student_id" column="student_id" jdbcType="VARCHAR"/>
+        <result property="student_name" column="student_name"/>
+        <result property="student_tel" column="student_tel"/>
+        <result property="student_office" column="student_office"/>
+        <result property="student_photo" column="student_photo"/>
+        <result property="student_gender" column="student_gender"/>
+        <result property="student_age" column="student_age"/>
+        <result property="student_seat" column="student_seat"/>
+        <result property="student_introduction" column="student_introduction"/>
+        <result property="student_hometown" column="student_hometown"/>
+        <result property="student_politicalStatus" column="student_politicalStatus"/>
+        <result property="student_birthday" column="student_birthday"/>
+        <result property="ID" column="ID"/>
+        <association property="classGrade" javaType="com.example.campus.bean.ClassGrade">
+            <id property="class_id" column="class_id" />
+            <result property="grade" column="grade" />
+            <result property="class_count" column="class_count" />
+            <result property="headTeacher_id" column="headTeacher_id" />
+        </association>
+
+    </resultMap>
+    <select id="selectStu" parameterType="String" resultMap="QueryMap">
+        select * from student
+        where student_id = #{student_id};
+    </select>
+    <select id="selectStuGroup" parameterType="String" resultMap="QueryMap">
+        select * from student where class_id = #{class_id}
+    </select>
+    <select id="calMen" parameterType="String" resultType="int">
+        SELECT count(student_id) FROM student WHERE student_gender = 1 AND class_id = #{class_id}
+    </select>
+    <select id="calWomen" parameterType="String" resultType="int">
+        SELECT count(student_id) FROM student WHERE student_gender = 0 AND class_id = #{class_id}
+    </select>
+    <select id="CalAvgAge" parameterType="String" resultType="double">
+        select avg(student_age) from student where class_id = #{class_id}
+    </select>
+</mapper>
