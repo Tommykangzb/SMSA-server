@@ -1,6 +1,11 @@
 package com.example.campus.bean;
 
+import tutorial.CourseDetail;
+import tutorial.CourseDetailCreate;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author 康智波
@@ -115,5 +120,46 @@ public class CourseEvaluates implements Serializable {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public static List<CourseDetail.CourseDetailResponseItem> toCourseDetailResponse(List<CourseEvaluates> list) {
+        if (list == null || list.size() == 0) {
+            return null;
+        }
+        List<CourseDetail.CourseDetailResponseItem> resultList = new ArrayList<>();
+        for (CourseEvaluates courseEvaluates : list) {
+            CourseDetail.CourseDetailResponseItem.Builder builder = CourseDetail.CourseDetailResponseItem.newBuilder();
+            builder.setCourseId(courseEvaluates.getCourseId())
+                    .setEvaluatorName(courseEvaluates.getEvaluatorName())
+                    .setAttendanceFrequency(courseEvaluates.getAttendanceFrequency())
+                    .setAttendanceWay(courseEvaluates.getAttendanceWay())
+                    .setExamWay(courseEvaluates.getExamWay())
+                    .setExamGivenGrades(courseEvaluates.getExamGivenGrades())
+                    .setCredit(courseEvaluates.getCredit())
+                    .setCourseScore(courseEvaluates.getCourseScore())
+                    .setLikeCount(courseEvaluates.getLikeCount())
+                    .setCourseEvaluateWords(courseEvaluates.getCourseEvaluateWords())
+                    .setDate(courseEvaluates.getDate())
+                    .setAvatarUrl(courseEvaluates.getAvatarUrl());
+            resultList.add(builder.build());
+        }
+        return resultList;
+    }
+
+    public static CourseEvaluates toCourseEvaluate(CourseDetailCreate.CourseDetailCreateRequest request) {
+        CourseEvaluates courseEvaluates = new CourseEvaluates();
+        courseEvaluates.setCourseId(request.getCourseId());
+        courseEvaluates.setAttendanceFrequency(request.getAttendanceFrequency());
+        courseEvaluates.setAttendanceWay(request.getAttendanceWay());
+        courseEvaluates.setExamWay(request.getExamWay());
+        courseEvaluates.setExamGivenGrades(request.getExamGivenGrades());
+        courseEvaluates.setCredit(request.getCredit());
+        courseEvaluates.setCourseScore(request.getCourseScore());
+        courseEvaluates.setLikeCount(request.getLikeCount());
+        courseEvaluates.setCourseEvaluateWords(request.getCourseEvaluateWords());
+        courseEvaluates.setDate(request.getDate());
+        courseEvaluates.setAvatarUrl("null");
+        courseEvaluates.setEvaluatorName("null");
+        return courseEvaluates;
     }
 }

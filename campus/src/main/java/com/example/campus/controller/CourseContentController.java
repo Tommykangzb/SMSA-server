@@ -1,10 +1,15 @@
 package com.example.campus.controller;
 
-import org.springframework.stereotype.Controller;
+import com.example.campus.bean.CourseEvaluates;
+import com.example.campus.service.CourseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import tutorial.Category;
 import tutorial.CourseContain;
+import tutorial.CourseDetail;
+import tutorial.CourseDetailCreate;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,14 +23,32 @@ import java.util.List;
  * @author 康智波
  * 2022,01,04
  */
-@Controller
+@RestController
 @RequestMapping("/courseMessage")
 @WebServlet
 public class CourseContentController {
+    @Autowired
+    CourseService courseService;
+
+    @RequestMapping("/detail")
+    @ResponseBody
+    public byte[] getCourseDetail(HttpServletRequest httpServletRequest) {
+        long courseId;
+        int limitCount;
+        try {
+            CourseDetail.CourseDetailRequest request = CourseDetail.CourseDetailRequest.parseFrom(httpServletRequest.getInputStream());
+            limitCount = request.getLimitCount();
+            courseId = request.getCourseId();
+            return courseService.getCourseDetail(String.valueOf(courseId), limitCount).toByteArray();
+        } catch (IOException o) {
+            o.printStackTrace();
+            throw new RuntimeException("catch an exception: " + o);
+        }
+    }
 
     @RequestMapping("/index")
     @ResponseBody
-    public byte[] index() {
+    public byte[] getCourseIndex() {
         List<String> list = new ArrayList<>(Arrays.asList("热门", "人文", "社科", "计算机", "医学", "材料", "物理", "艺术"));
         Category.CategoryResponse.Builder categoryResponseBuilder = Category.CategoryResponse.newBuilder();
         categoryResponseBuilder.setCount(list.size());
@@ -38,32 +61,32 @@ public class CourseContentController {
 
     @RequestMapping("/courseContent")
     @ResponseBody
-    public byte[] courseContain(HttpServletRequest httpServletRequest) {
+    public byte[] getCourseContain(HttpServletRequest httpServletRequest) {
+        long id = -1L;
+        int limitCount;
         try {
             CourseContain.CategoryContainRequest request = CourseContain.CategoryContainRequest.parseFrom(httpServletRequest.getInputStream());
-            System.out.println(request.getLimitCount());
+            limitCount = request.getLimitCount();
+            return courseService.getCourseContent(id, limitCount).toByteArray();
         } catch (IOException o) {
             o.printStackTrace();
+            throw new RuntimeException("catch an exception: " + o);
         }
-        List<String> dataList = new ArrayList<>(Arrays.asList("酒文化鉴赏与啤酒的酿造工艺讲解", "现代小说选集", "水利工程概论", "计算机概论", "医学解剖", "材料力学基础", "天体物理"));
-        List<String> dataListGrades = new ArrayList<>(Arrays.asList("95", "93", "92", "96", "90", "85", "86"));
-        List<String> dataListTeacher = new ArrayList<>(Arrays.asList("刘墉", "方猪猪", "海盗狗", "海盗猪", "Aadsa", "Ddidae", "Mhala"));
-        List<String> dataListCategory = new ArrayList<>(Arrays.asList("人文核心", "人文", "社科", "计算机", "材料", "医学", "物理"));
-        List<CourseContain.CategoryResult> resultList = new ArrayList<>();
-        for (int i = 0; i < dataList.size(); i++) {
-            resultList.add(CourseContain.CategoryResult.newBuilder()
-                    .setCourseName(dataList.get(i))
-                    .setCourseGrades(dataListGrades.get(i))
-                    .setCourseTeacher(dataListTeacher.get(i))
-                    .setCourseType(dataListCategory.get(i))
-                    .build());
+    }
+
+    @RequestMapping("/publish")
+    @ResponseBody
+    public byte[] createCourseDetail(HttpServletRequest httpServletRequest) {
+        try {
+            CourseDetailCreate.CourseDetailCreateRequest request = CourseDetailCreate.CourseDetailCreateRequest.
+                    parseFrom(httpServletRequest.getInputStream());
+            String account = request.getUserId();
+            return courseService.insertCourseDetail(CourseEvaluates.toCourseEvaluate(request),
+                    account).toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("catch an exception: " + e);
         }
-        CourseContain.CategoryContainResponse.Builder builder = CourseContain.CategoryContainResponse.newBuilder();
-        builder.setCount(7)
-                .setIsLoadAll(true)
-                .setStartIndex(0)
-                .addAllResults(resultList);
-        return builder.build().toByteArray();
     }
 
 }

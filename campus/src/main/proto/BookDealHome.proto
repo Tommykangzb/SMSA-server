@@ -15,15 +15,17 @@ message BookDealResponse{
 }
 
 message BookMessage {
-   string          bookImageUrl    = 1;
-   string          bookName        = 2;
-   float           price           = 3;
-   string          sellerName      = 4;
-   string          sellerAvatarUrl = 5;
-   int32           likeCount       = 6;
-   string          description     = 7;
-   repeated string bookMsgImage    = 8;
-   uint64          sellerId        = 9;
-   uint64          bookId          = 10;
-   string          sellMsg         = 11;
+  string          bookImageUrl    = 1;
+  string          bookName        = 2;
+  float           price           = 3;
+  string          sellerName      = 4;
+  string          sellerAvatarUrl = 5;
+  int32           likeCount       = 6;
+  string          description     = 7;
+  repeated string bookMsgImage    = 8;
+  uint64          sellerId        = 9;
+  uint64          bookId          = 10;
+  string          sellMsg         = 11;
+  int32           collectCount    = 12;
+  int32           reviewCount     = 13;
 }

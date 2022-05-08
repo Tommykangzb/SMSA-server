@@ -8,7 +8,7 @@ public class Account implements Serializable {
 
     private String account_num;
     private String passwordHashStr;
-    //private
+    private String userId;
 
     public String getAccount_num() {
         return account_num;
@@ -26,5 +26,11 @@ public class Account implements Serializable {
         this.passwordHashStr = password;
     }
 
+    public String getUserId() {
+        return userId;
+    }
 
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 }

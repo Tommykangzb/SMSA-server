@@ -22,9 +22,9 @@ public class BookDealController {
     @Autowired
     BookDealService bookDealHomeService;
 
-    @RequestMapping("/home")
+    @RequestMapping("/homeBook")
     @ResponseBody
-    public byte[] getBookDealData(HttpServletRequest httpServletRequest) {
+    public byte[] getHomeBookData(HttpServletRequest httpServletRequest) {
         try {
             BookDealHome.BookDealRequest request = BookDealHome.BookDealRequest.parseFrom(httpServletRequest.getInputStream());
             long id = request.getUserId();
@@ -36,9 +36,24 @@ public class BookDealController {
         }
     }
 
+    //不包括热门图书
+    @RequestMapping("/baseBook")
+    @ResponseBody
+    public byte[] getBaseBookData(HttpServletRequest httpServletRequest) {
+        try {
+            BookDealHome.BookDealRequest request = BookDealHome.BookDealRequest.parseFrom(httpServletRequest.getInputStream());
+            long id = request.getUserId();
+            int count = request.getLimitCount();
+            return bookDealHomeService.getBaseBookResponse(id, count).toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("catch an exception: " + e);
+        }
+    }
+
     @RequestMapping("/test")
     @ResponseBody
     public String getMsg() {
-        return bookDealHomeService.getMsg(123344);
+        return bookDealHomeService.getAccount("12233445");
     }
 }
