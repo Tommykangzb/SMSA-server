@@ -1,0 +1,23 @@
+#端口配置
+server:
+  port: 8080
+#jdbc配置
+spring:
+  application:
+    name: campus
+  datasource:
+    #name: campus_db
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/campus_db?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2b8&allowMultiQueries=true
+    username: root
+    password: 123456
+  servlet:
+    multipart:
+      location: D:\images\
+  #mybatis配置
+mybatis:
+  #实体类所在包名
+  mapper-locations: classpath:/mapper/*.xml
+  #type-aliases-package: com.example.campus.dao
+netty:
+  port: 9090

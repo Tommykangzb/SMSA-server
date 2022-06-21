@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.campus.dao.CourseDAO">
+    <resultMap type="com.example.campus.bean.Course" id="CourseMap">
+        <id property="courseId" column="courseId" />
+        <result property="courseName" column="courseName" jdbcType="VARCHAR"/>
+        <result property="courseTeacher" column="courseTeacher" jdbcType="VARCHAR"/>
+        <result property="courseType" column="courseCategory" jdbcType="VARCHAR"/>
+        <result property="courseGrades" column="courseGrades"/>
+        <result property="watcherCount" column="watcherCount"/>
+        <result property="backgroundURL" column="backgroundURL" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getCourseContent" resultMap="CourseMap">
+        select * from course
+    </select>
+
+    <resultMap type="com.example.campus.bean.CourseEvaluates" id="CourseDetailMap">
+        <id property="courseId" column="courseId"/>
+        <result property="evaluatorName" column="userName" jdbcType="VARCHAR"/>
+        <result property="attendanceFrequency" column="attendanceFrequency" jdbcType="VARCHAR"/>
+        <result property="attendanceWay" column="attendanceWay" jdbcType="VARCHAR"/>
+        <result property="examWay" column="examWay"/>
+        <result property="examGivenGrades" column="examGivenGrades"/>
+        <result property="credit" column="credit"/>
+        <result property="courseScore" column="courseScore"/>
+        <result property="likeCount" column="likeCount"/>
+        <result property="courseEvaluateWords" column="courseEvaluateWords" jdbcType="VARCHAR"/>
+        <result property="date" column="date" jdbcType="VARCHAR"/>
+        <result property="avatarUrl" column="userAvatarUrl" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getCourseDetail" resultMap="CourseDetailMap" parameterType="java.lang.String">
+        select *
+        from user_table natural  join course_detail
+        where courseId = #{courseId}
+    </select>
+
+    <select id="isContainUser" parameterType="String">
+        select count(child.userId)
+        from (select userId from course_detail where courseId = #{courseId}) as child
+        where child.userId = #{userId}
+    </select>
+
+<!--    <select id="insertCourseDetail" parameterType="String">-->
+<!--        INSERT into course_detail(courseId, userId, attendanceFrequency, attendanceWay,-->
+<!--                                  examWay, examGivenGrades, credit, courseScore, likeCount,-->
+<!--                                  courseEvaluateWords, date)-->
+<!--        VALUES (#{courseId, jdbcType=VARCHAR}, #{userId, jdbcType=VARCHAR}, #{attendanceFrequency, jdbcType=VARCHAR},-->
+<!--                #{attendanceWay, jdbcType=VARCHAR}, #{examWay, jdbcType=VARCHAR}, #{examGivenGrades, jdbcType=VARCHAR},-->
+<!--                #{credit, jdbcType=FLOAT}, #{courseScore, jdbcType=INTENGER}, #{likeCount, jdbcType=INTEGER},-->
+<!--                #{courseEvaluateWords,jdbcType=VARCHAR}, #{date, jdbcType=VARCHAR})-->
+<!--    </select>-->
+
+
+
+</mapper>

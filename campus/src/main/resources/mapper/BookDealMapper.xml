@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.campus.dao.BookDealDAO">
+    <resultMap type="com.example.campus.bean.Book" id="BookDealMap">
+        <id property="bookId" column="bookId"/>
+        <result property="bookImageUrl" column="bookImageUrl" jdbcType="VARCHAR"/>
+        <result property="bookName" column="bookName" jdbcType="VARCHAR"/>
+        <result property="sellerName" column="userName" jdbcType="VARCHAR"/>
+        <result property="sellerAvatarUrl" column="userAvatarUrl" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="sellMsg" column="sellMsg" jdbcType="VARCHAR"/>
+        <result property="sellerId" column="userId"/>
+        <result property="bookId" column="bookId"/>
+        <result property="price" column="price"/>
+        <result property="likeCount" column="likeCount"/>
+        <collection property="bookMsgImage" javaType="java.util.ArrayList" column="bookId" ofType="String" select="getBookImage"/>
+    </resultMap>
+    <select id="getBookImage" resultType="String">
+        select bookMsgImage
+        from book__msg_images
+        where bookId = #{bookId}
+    </select>
+    <select id="getHotBook" resultMap="BookDealMap">
+        select *
+        from bargain natural join book natural join user_table natural join book__msg_images
+        order by likeCount
+        limit 10
+    </select>
+
+    <select id="getBaseBook" resultMap="BookDealMap">
+        select *
+        from bargain natural join book natural join user_table natural join book__msg_images
+    </select>
+
+    <select id="getAccount" parameterType="String" resultType="String">
+        select passwordHashStr from account
+        where account_num = #{account_num}
+    </select>
+
+</mapper>

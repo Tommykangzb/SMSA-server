@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.campus.dao.AccountDAO">
+    <!-- 登录 -->
+    <resultMap type="com.example.campus.bean.User" id="LoginMap">
+        <result property="userId" column="userId" jdbcType="VARCHAR"/>
+        <result property="userAvatarUrl" column="userAvatarUrl" jdbcType="VARCHAR"/>
+        <result property="userName" column="userName" jdbcType="VARCHAR"/>
+        <result property="userSchool" column="userSchool" jdbcType="VARCHAR"/>
+        <result property="userGrade" column="userGrade"/>
+    </resultMap>
+    <select id="login" parameterType="String" resultMap="LoginMap">
+        SELECT *
+        FROM user_table
+        WHERE userId = (SELECT  userId FROM `account`where account_num = #{account_num})
+    </select>
+    <!-- 验证账号密码 -->
+    <resultMap type="com.example.campus.bean.Account" id="VerifyMap">
+        <result property="account_num" column="account_num" jdbcType="VARCHAR"/>
+        <result property="passwordHashStr" column="passwordHashStr" jdbcType="VARCHAR"/>
+        <result property="userId" column="userId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="getLoginPsw" parameterType="String" resultType="String">
+       select passwordHashStr from account
+       where account_num = #{account_num, jdbcType=VARCHAR};
+    </select>
+
+    <!-- 增加账号 -->
+    <insert id="insertAccount" parameterType="String">
+		INSERT INTO user_table(userId,userAvatarUrl,userName,userSchool,userGrade,email)
+		VALUES (#{userId, jdbcType=VARCHAR},null,null,null,null,#{email, jdbcType=VARCHAR});
+        INSERT INTO account(account_num,passwordHashStr,userId)
+		VALUES (#{account_num, jdbcType=VARCHAR},#{passwordHashStr, jdbcType=VARCHAR},#{userId, jdbcType=VARCHAR});
+    </insert>
+    <!-- 删除账号 -->
+    <delete id="deleteAccount" parameterType="String">
+        delete from user_table where userId = (
+        select UserId from account where account_num=#{account_num} );
+        delete from account where account_num=#{account_num}
+    </delete>
+
+    <update id="editPsw" parameterType="String">
+	    update account set account.passwordHashStr = #{password}
+	    where account_num = #{acount_num}
+	</update>
+
+</mapper>
