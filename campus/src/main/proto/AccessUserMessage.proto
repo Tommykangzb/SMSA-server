@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+ option java_package = "com.example.campus.protoModel";
+
+ message AccessUserMsgRequest{
+   string uid = 1;
+ }
+
+ message AccessUserMsgResponse{
+   SingleUserMsgModel friendMsgList = 1;
+ }
+
+ message SingleUserMsgModel{
+   string uid           = 1;
+   string name          = 2;
+   string userGrade     = 3;
+   string userSelfDes   = 4;
+   int32  userSchool    = 5;
+   string userAvatarUrl = 6;
+ }

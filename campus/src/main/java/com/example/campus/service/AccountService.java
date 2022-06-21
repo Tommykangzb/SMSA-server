@@ -1,10 +1,8 @@
 package com.example.campus.service;
 
-import com.example.campus.bean.Account;
 import org.apache.ibatis.annotations.Mapper;
 import tutorial.Login;
 
-import java.util.List;
 @Mapper
 public interface AccountService {
 

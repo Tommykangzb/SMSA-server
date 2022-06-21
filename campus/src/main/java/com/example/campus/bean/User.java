@@ -1,6 +1,10 @@
 package com.example.campus.bean;
 
+import com.example.campus.protoModel.FriendsList;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author 康智波
@@ -12,6 +16,7 @@ public class User implements Serializable {
     private String userName;
     private String userSchool;
     private String userGrade;
+    private String selfDes;
 
     public String getUserId() {
         return userId;
@@ -51,5 +56,28 @@ public class User implements Serializable {
 
     public void setUserGrade(String userGrade) {
         this.userGrade = userGrade;
+    }
+
+    public String getSelfDes() {
+        return selfDes;
+    }
+
+    public void setSelfDes(String selfDes) {
+        this.selfDes = selfDes;
+    }
+
+    public static List<FriendsList.AccessUserMsgModel> toUserModel(List<User> list){
+        List<FriendsList.AccessUserMsgModel> modelList = new ArrayList<>();
+        for (User user: list) {
+            FriendsList.AccessUserMsgModel.Builder builder = FriendsList.AccessUserMsgModel.newBuilder();
+            builder.setName(user.getUserName())
+                    .setUid(user.getUserId())
+                    .setUserAvatarUrl(user.getUserAvatarUrl())
+                    .setUserGrade(user.getUserGrade())
+                    .setUserSchool(user.getUserSchool())
+                    .setUserSelfDes(user.getSelfDes());
+            modelList.add(builder.build());
+        }
+        return modelList;
     }
 }

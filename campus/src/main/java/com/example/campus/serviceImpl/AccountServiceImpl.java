@@ -39,6 +39,7 @@ public class AccountServiceImpl implements AccountService {
                         .setUserName(user.getUserName() == null ? "unknown" : user.getUserName())
                         .setUserImageUrl(user.getUserAvatarUrl() == null ? "unknown" : user.getUserAvatarUrl())
                         .setUserGrade(user.getUserGrade() == null ? "unknown" : user.getUserGrade())
+                        .setUserId(userId)
                         .setTimeStamp(System.currentTimeMillis());
             }
             return builder.build();
@@ -64,7 +65,7 @@ public class AccountServiceImpl implements AccountService {
             password = EncryptHelper.encryption(userId,password);
             boolean isSucceed = accountDAO.insertAccount(account_num, password, email, userId) > 0;
             if (isSucceed) {
-                builder = ResponseDefaultConstructor.getLoginResponseInstance(2);
+                builder = ResponseDefaultConstructor.getLoginResponseInstance(2, userId);
             } else {
                 builder = ResponseDefaultConstructor.getLoginResponseInstance(-3);
             }
